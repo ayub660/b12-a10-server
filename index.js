@@ -1,15 +1,15 @@
-const express = require('express')
-const cors = require('cors')
+const express = require('express');
+const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const app = express()
-const port = 3500
+const { ObjectId } = require("mongodb"); // <- add this for /issues/:id
+const app = express();
+const port = 3500;
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 const uri = "mongodb+srv://assignment10:PQx3GjaXZhiw5jL4@cluster0.wpjlndq.mongodb.net/?appName=Cluster0";
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -35,32 +35,28 @@ app.post("/issues", async (req, res) => {
     const issue = req.body;
     const collection = client.db("reporting_portal").collection("issues");
     const result = await collection.insertOne(issue);
-
-    res.status(201).json({
-      success: true,
-      message: "Issue added successfully",
-      issueId: result.insertedId,
-    });
+    res.status(201).json({ success: true, message: "Issue added successfully", issueId: result.insertedId });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Failed to add issue" });
   }
 });
-//GET /issues //
-app.get("/issues", async (req, res) => {
+
+// ===== GET /issues/:id endpoint =====
+app.get("/issues/:id", async (req, res) => {
   try {
+    const id = req.params.id;
     const collection = client.db("reporting_portal").collection("issues");
-    const issues = await collection.find({}).toArray();
-    res.status(200).json(issues);
+    const issue = await collection.findOne({ _id: new ObjectId(id) });
+
+    if (!issue) return res.status(404).json({ success: false, message: "Issue not found" });
+
+    res.json(issue);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Failed to fetch issues" });
+    res.status(500).json({ success: false, message: "Failed to fetch issue" });
   }
 });
-
-
-
-
 
 // Root test route
 app.get('/', (req, res) => {
