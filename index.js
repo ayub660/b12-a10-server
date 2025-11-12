@@ -46,6 +46,21 @@ app.post("/issues", async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to add issue" });
   }
 });
+//GET /issues //
+app.get("/issues", async (req, res) => {
+  try {
+    const collection = client.db("reporting_portal").collection("issues");
+    const issues = await collection.find({}).toArray();
+    res.status(200).json(issues);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Failed to fetch issues" });
+  }
+});
+
+
+
+
 
 // Root test route
 app.get('/', (req, res) => {
