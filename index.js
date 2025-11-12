@@ -3,11 +3,9 @@ const cors = require('cors')
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express()
 const port = 3500
+
 app.use(cors())
 app.use(express.json())
-
-
-
 
 const uri = "mongodb+srv://assignment10:PQx3GjaXZhiw5jL4@cluster0.wpjlndq.mongodb.net/?appName=Cluster0";
 
@@ -22,29 +20,39 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
 run().catch(console.dir);
 
+// ===== POST /issues endpoint =====
+app.post("/issues", async (req, res) => {
+  try {
+    const issue = req.body;
+    const collection = client.db("reporting_portal").collection("issues");
+    const result = await collection.insertOne(issue);
 
+    res.status(201).json({
+      success: true,
+      message: "Issue added successfully",
+      issueId: result.insertedId,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Failed to add issue" });
+  }
+});
 
-
-
-
-
-
+// Root test route
 app.get('/', (req, res) => {
-    res.send('server is running fine ss')
-})
+  res.send('Server is running fine');
+});
 
+// Start server
 app.listen(port, () => {
-  console.log(`server isnpi i  listening on port ${port}`)
-})
+  console.log(`Server listening on port ${port}`);
+});
