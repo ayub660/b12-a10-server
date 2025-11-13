@@ -26,8 +26,8 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    await client.db("admin").command({ ping: 1 });
-    console.log("✅ Connected to MongoDB successfully!");
+    // await client.db("admin").command({ ping: 1 });
+    console.log(" Connected to MongoDB successfully!");
   } catch (error) {
     console.error(" MongoDB connection failed:", error);
   }
@@ -42,7 +42,7 @@ const contributionCollection = client.db("reporting_portal").collection("contrib
 
 // Root route
 app.get("/", (req, res) => {
-  res.send("🚀 Community Issue Reporting Server is running fine!");
+  res.send(" Community Issue Reporting Server is running fine!");
 });
 
 //  POST - Add new issue
