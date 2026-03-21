@@ -1,18 +1,25 @@
-// server.js
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-
 const app = express();
-const port = 3500;
+const port = process.env.PORT || 3500;
 
 // === Middleware ===
 app.use(cors());
 app.use(express.json());
 
+
+// Cleancity
+// INBPBRdxDs30CpGF
+
+//const uri = "mongodb+srv://Cleancity:<db_password>@cleancity.daet6od.mongodb.net/?appName=cleancity";
+
 // === MongoDB Connection ===
-const uri =
-  "mongodb+srv://assignment10:PQx3GjaXZhiw5jL4@cluster0.wpjlndq.mongodb.net/?appName=Cluster0";
+// const uri =
+//   "mongodb+srv://assignment10:PQx3GjaXZhiw5jL4@cluster0.wpjlndq.mongodb.net/?appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cleancity.daet6od.mongodb.net/reporting_portal?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true`;
+
 
 const client = new MongoClient(uri, {
   serverApi: {
